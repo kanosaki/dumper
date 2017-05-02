@@ -1,0 +1,13 @@
+package: github.com/kanosaki/dumper
+import:
+  - package: github.com/kanosaki/gopixiv
+  - package: github.com/boltdb/bolt
+  - package: gopkg.in/olivere/elastic.v5
+  - package: github.com/jasonlvhit/gocron
+  - package: github.com/dghubble/go-twitter/twitter
+    repo: git@github.com:kanosaki/go-twitter
+  - package: github.com/dghubble/oauth1
+  - package: github.com/kurrik/oauth1a
+  - package: github.com/rubyist/circuitbreaker
+  - package: github.com/mattn/go-sqlite3
+  - package: github.com/labstack/echo
