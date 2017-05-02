@@ -1,0 +1,16 @@
+# Golang
+vendor/
+
+# IntellIJ
+.idea/
+*.iml
+
+# Binaries
+dumpd
+cmd/dumpd/dumpd
+
+/conf/
+# Todo: make conf templates and exclude
+
+# SQLite databases
+*.sqlite
