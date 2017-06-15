@@ -26,7 +26,3 @@ func (i *Item) String() string {
 	return fmt.Sprintf("Item{%d, %v, %d, %d}", i.ID, i.Caption, i.TopicID, i.OriginKey)
 }
 
-type Publishing struct {
-	Topic string
-	Item  *Item
-}

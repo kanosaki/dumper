@@ -19,7 +19,7 @@ var (
 
 type Storage interface {
 	Insert(ctx context.Context, item ... *Item) (int64, error)
-	Select(ctx context.Context, q *Query) ([]Publishing, error)
+	Select(ctx context.Context, q *Query) ([]*Item, error)
 	OriginID(ctx context.Context, originName string, createIfMissing bool) (int, error)
 	TopicID(ctx context.Context, key string, originID int, createIfMissing bool) (int, error)
 	DB() *sql.DB
@@ -229,7 +229,7 @@ func (s *SQLiteStorage) Insert(ctx context.Context, item ... *Item) (int64, erro
 	return r.LastInsertId()
 }
 
-func (s *SQLiteStorage) Select(ctx context.Context, q *Query) ([]Publishing, error) {
+func (s *SQLiteStorage) Select(ctx context.Context, q *Query) ([]*Item, error) {
 	where, params, ascend := q.ToWhereClause()
 	query := `SELECT
 		timeline.id, timeline.topic_id, timeline.caption, timeline.thumbnail, timeline.origin_key, timeline.timestamp, timeline.meta,
@@ -239,9 +239,9 @@ func (s *SQLiteStorage) Select(ctx context.Context, q *Query) ([]Publishing, err
 	if err != nil {
 		return nil, err
 	}
-	var ret []Publishing
+	var ret []*Item
 	if q.Limit > 0 {
-		ret = make([]Publishing, 0, q.Limit)
+		ret = make([]*Item, 0, q.Limit)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -260,17 +260,15 @@ func (s *SQLiteStorage) Select(ctx context.Context, q *Query) ([]Publishing, err
 			}
 		}
 		json.Unmarshal(metaBytes, &meta)
-		ret = append(ret, Publishing{
-			Topic: topicName,
-			Item: &Item{
-				ID:        id,
-				Caption:   caption,
-				Thumbnail: thumbnail,
-				Timestamp: time.Unix(0, timestamp*int64(time.Millisecond)),
-				TopicID:   topicID,
-				OriginKey: originKey,
-				Meta:      meta,
-			},
+		ret = append(ret, &Item{
+			ID:        id,
+			Caption:   caption,
+			Thumbnail: thumbnail,
+			Timestamp: time.Unix(0, timestamp*int64(time.Millisecond)),
+			TopicID:   topicID,
+			OriginKey: originKey,
+			TopicKey:  topicName,
+			Meta:      meta,
 		})
 	}
 	if rows.Err() != nil {
@@ -278,7 +276,7 @@ func (s *SQLiteStorage) Select(ctx context.Context, q *Query) ([]Publishing, err
 	}
 	if ascend {
 		// flip array
-		flipped := make([]Publishing, len(ret))
+		flipped := make([]*Item, len(ret))
 		for i := range ret {
 			flipped[i] = ret[len(ret)-i-1]
 		}

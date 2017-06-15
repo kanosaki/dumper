@@ -21,6 +21,7 @@ func (l *Listener) Push(i *Item) {
 	l.C <- i
 }
 
+// Return head of buffer channel as slice.
 func (l *Listener) Fetch(limit int) []*Item {
 	l.fetchMu.Lock()
 	defer l.fetchMu.Unlock()

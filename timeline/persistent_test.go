@@ -31,10 +31,10 @@ func printTimelines(db Storage) error {
 	return nil
 }
 
-func mapOriginKey(pubs []Publishing) []int64 {
-	ret := make([]int64, 0, len(pubs))
-	for _, pub := range pubs {
-		ret = append(ret, pub.Item.OriginKey)
+func mapOriginKey(items []*Item) []int64 {
+	ret := make([]int64, 0, len(items))
+	for _, item := range items {
+		ret = append(ret, item.OriginKey)
 	}
 	return ret
 }

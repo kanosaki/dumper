@@ -105,6 +105,10 @@ func (s *Service) Topics(prefix string) (ret []*Topic) {
 	return
 }
 
+func (s *Service) Fetch(ctx context.Context, q *Query) ([]*Item, error) {
+	return s.persistent.Select(ctx, q)
+}
+
 func (s *Service) Listen(key string) (*Listener, error) {
 	lis := &Listener{
 		Key: key,
